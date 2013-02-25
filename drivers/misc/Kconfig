@@ -513,6 +513,13 @@ config MISC_RTSX
 	tristate
 	default MISC_RTSX_PCI || MISC_RTSX_USB
 
+config UBOOT_BOOTCOUNT
+	tristate "U-Boot Bootcount driver"
+	depends on OF
+	help
+	  The U-Boot Bootcount driver allows to access the
+	  bootcounter through sysFS file.
+
 source "drivers/misc/c2port/Kconfig"
 source "drivers/misc/eeprom/Kconfig"
 source "drivers/misc/cb710/Kconfig"
