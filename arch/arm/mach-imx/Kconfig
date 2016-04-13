@@ -580,6 +580,9 @@ endchoice
 
 endif
 
+config MXC_REBOOT_ANDROID_CMD
+	bool "Android reboot setting"
+
 source "arch/arm/mach-imx/devices/Kconfig"
 
 endif
