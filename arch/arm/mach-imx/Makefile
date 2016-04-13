@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0
 obj-y := cpu.o system.o irq-common.o
 
+obj-$(CONFIG_MXC_REBOOT_ANDROID_CMD) += reboot.o
+
 obj-$(CONFIG_SOC_IMX21) += mm-imx21.o
 
 obj-$(CONFIG_SOC_IMX25) += cpu-imx25.o mach-imx25.o pm-imx25.o
