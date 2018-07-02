@@ -625,10 +625,13 @@ static int imx_get_sensor_data(struct platform_device *pdev)
 		imx6_calibrate_data(data, val);
 
 	/* use OTP for thermal grade */
-	if (data->socdata->version == TEMPMON_IMX7)
+	if (data->socdata->version == TEMPMON_IMX7) {
 		ret = regmap_read(map, IMX7_OCOTP_TESTER3, &val);
-	else
+		val = (val >> 8) & 0x03;
+	} else {
 		ret = regmap_read(map, OCOTP_MEM0, &val);
+		val = (val >> 6) & 0x03;
+	}
 
 	if (ret) {
 		dev_err(&pdev->dev, "failed to read temp grade: %d\n", ret);
@@ -636,7 +639,7 @@ static int imx_get_sensor_data(struct platform_device *pdev)
 	}
 
 	/* The maximum die temp is specified by the Temperature Grade */
-	switch ((val >> 6) & 0x3) {
+	switch (val) {
 	case 0: /* Commercial (0 to 95C) */
 		data->temp_grade = "Commercial";
 		data->temp_max = 95000;
