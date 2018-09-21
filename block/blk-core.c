@@ -2159,8 +2159,13 @@ static inline bool should_fail_request(struct hd_struct *part,
 
 static inline bool bio_check_ro(struct bio *bio, struct hd_struct *part)
 {
-	if (part->policy && op_is_write(bio_op(bio))) {
+	const int op = bio_op(bio);
+
+	if (part->policy && op_is_write(op)) {
 		char b[BDEVNAME_SIZE];
+
+		if (op_is_flush(bio->bi_opf) && !bio_sectors(bio))
+			return false;
 
 		WARN_ONCE(1,
 		       "generic_make_request: Trying to write "
