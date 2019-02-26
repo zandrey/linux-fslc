@@ -1248,10 +1248,11 @@ void free_huge_page(struct page *page)
 		(struct hugepage_subpool *)page_private(page);
 	bool restore_reserve;
 
-	set_page_private(page, 0);
-	page->mapping = NULL;
 	VM_BUG_ON_PAGE(page_count(page), page);
 	VM_BUG_ON_PAGE(page_mapcount(page), page);
+
+	set_page_private(page, 0);
+	page->mapping = NULL;
 	restore_reserve = PagePrivate(page);
 	ClearPagePrivate(page);
 
@@ -4269,7 +4270,8 @@ long follow_hugetlb_page(struct mm_struct *mm, struct vm_area_struct *vma,
 				break;
 			}
 			if (ret & VM_FAULT_RETRY) {
-				if (nonblocking)
+				if (nonblocking &&
+				    !(fault_flags & FAULT_FLAG_RETRY_NOWAIT))
 					*nonblocking = 0;
 				*nr_pages = 0;
 				/*

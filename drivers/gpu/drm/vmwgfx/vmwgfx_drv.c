@@ -49,6 +49,8 @@
 
 #define VMWGFX_REPO "In Tree"
 
+#define VMWGFX_VALIDATION_MEM_GRAN (16*PAGE_SIZE)
+
 
 /**
  * Fully encoded drm commands. Might move to vmw_drm.h
@@ -627,13 +629,16 @@ out_fixup:
 static int vmw_dma_masks(struct vmw_private *dev_priv)
 {
 	struct drm_device *dev = dev_priv->dev;
+	int ret = 0;
 
-	if (intel_iommu_enabled &&
+	ret = dma_set_mask_and_coherent(dev->dev, DMA_BIT_MASK(64));
+	if (dev_priv->map_mode != vmw_dma_phys &&
 	    (sizeof(unsigned long) == 4 || vmw_restrict_dma_mask)) {
 		DRM_INFO("Restricting DMA addresses to 44 bits.\n");
-		return dma_set_mask(dev->dev, DMA_BIT_MASK(44));
+		return dma_set_mask_and_coherent(dev->dev, DMA_BIT_MASK(44));
 	}
-	return 0;
+
+	return ret;
 }
 #else
 static int vmw_dma_masks(struct vmw_private *dev_priv)
@@ -918,7 +923,7 @@ static int vmw_driver_load(struct drm_device *dev, unsigned long chipset)
 		spin_unlock(&dev_priv->cap_lock);
 	}
 
-
+	vmw_validation_mem_init_ttm(dev_priv, VMWGFX_VALIDATION_MEM_GRAN);
 	ret = vmw_kms_init(dev_priv);
 	if (unlikely(ret != 0))
 		goto out_no_kms;

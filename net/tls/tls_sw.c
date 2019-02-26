@@ -439,6 +439,8 @@ static int tls_do_encryption(struct sock *sk,
 	struct scatterlist *sge = sk_msg_elem(msg_en, start);
 	int rc;
 
+	memcpy(rec->iv_data, tls_ctx->tx.iv, sizeof(rec->iv_data));
+
 	sge->offset += tls_ctx->tx.prepend_size;
 	sge->length -= tls_ctx->tx.prepend_size;
 
@@ -448,7 +450,7 @@ static int tls_do_encryption(struct sock *sk,
 	aead_request_set_ad(aead_req, TLS_AAD_SPACE_SIZE);
 	aead_request_set_crypt(aead_req, rec->sg_aead_in,
 			       rec->sg_aead_out,
-			       data_len, tls_ctx->tx.iv);
+			       data_len, rec->iv_data);
 
 	aead_request_set_callback(aead_req, CRYPTO_TFM_REQ_MAY_BACKLOG,
 				  tls_encrypt_done, sk);
@@ -935,10 +937,12 @@ fallback_to_reg_send:
 				    tls_ctx->tx.overhead_size);
 		}
 
-		ret = sk_msg_memcopy_from_iter(sk, &msg->msg_iter, msg_pl,
-					       try_to_copy);
-		if (ret < 0)
-			goto trim_sgl;
+		if (try_to_copy) {
+			ret = sk_msg_memcopy_from_iter(sk, &msg->msg_iter,
+						       msg_pl, try_to_copy);
+			if (ret < 0)
+				goto trim_sgl;
+		}
 
 		/* Open records defined only if successfully copied, otherwise
 		 * we would trim the sg but not reset the open record frags.
@@ -1766,7 +1770,9 @@ void tls_sw_free_resources_tx(struct sock *sk)
 	if (atomic_read(&ctx->encrypt_pending))
 		crypto_wait_req(-EINPROGRESS, &ctx->async_wait);
 
+	release_sock(sk);
 	cancel_delayed_work_sync(&ctx->tx_work.work);
+	lock_sock(sk);
 
 	/* Tx whatever records we can transmit and abandon the rest */
 	tls_tx_records(sk, -1);

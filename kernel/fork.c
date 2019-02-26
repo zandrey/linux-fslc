@@ -221,6 +221,7 @@ static unsigned long *alloc_thread_stack_node(struct task_struct *tsk, int node)
 		memset(s->addr, 0, THREAD_SIZE);
 
 		tsk->stack_vm_area = s;
+		tsk->stack = s->addr;
 		return s->addr;
 	}
 
@@ -240,8 +241,10 @@ static unsigned long *alloc_thread_stack_node(struct task_struct *tsk, int node)
 	 * free_thread_stack() can be called in interrupt context,
 	 * so cache the vm_struct.
 	 */
-	if (stack)
+	if (stack) {
 		tsk->stack_vm_area = find_vm_area(stack);
+		tsk->stack = stack;
+	}
 	return stack;
 #else
 	struct page *page = alloc_pages_node(node, THREADINFO_GFP,
@@ -288,7 +291,10 @@ static struct kmem_cache *thread_stack_cache;
 static unsigned long *alloc_thread_stack_node(struct task_struct *tsk,
 						  int node)
 {
-	return kmem_cache_alloc_node(thread_stack_cache, THREADINFO_GFP, node);
+	unsigned long *stack;
+	stack = kmem_cache_alloc_node(thread_stack_cache, THREADINFO_GFP, node);
+	tsk->stack = stack;
+	return stack;
 }
 
 static void free_thread_stack(struct task_struct *tsk)
@@ -1832,8 +1838,6 @@ static __latent_entropy struct task_struct *copy_process(
 
 	posix_cpu_timers_init(p);
 
-	p->start_time = ktime_get_ns();
-	p->real_start_time = ktime_get_boot_ns();
 	p->io_context = NULL;
 	audit_set_context(p, NULL);
 	cgroup_fork(p);
@@ -1998,6 +2002,17 @@ static __latent_entropy struct task_struct *copy_process(
 	retval = cgroup_can_fork(p);
 	if (retval)
 		goto bad_fork_free_pid;
+
+	/*
+	 * From this point on we must avoid any synchronous user-space
+	 * communication until we take the tasklist-lock. In particular, we do
+	 * not want user-space to be able to predict the process start-time by
+	 * stalling fork(2) after we recorded the start_time but before it is
+	 * visible to the system.
+	 */
+
+	p->start_time = ktime_get_ns();
+	p->real_start_time = ktime_get_boot_ns();
 
 	/*
 	 * Make it visible to the rest of the system, but dont wake it up yet.

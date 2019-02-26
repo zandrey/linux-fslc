@@ -48,6 +48,7 @@
 #include <net/udp.h>
 #include <net/tcp.h>
 #include <linux/bvec.h>
+#include <linux/highmem.h>
 #include <linux/uio.h>
 
 #include <trace/events/sunrpc.h>
@@ -380,6 +381,26 @@ xs_read_discard(struct socket *sock, struct msghdr *msg, int flags,
 	return sock_recvmsg(sock, msg, flags);
 }
 
+#if ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE
+static void
+xs_flush_bvec(const struct bio_vec *bvec, size_t count, size_t seek)
+{
+	struct bvec_iter bi = {
+		.bi_size = count,
+	};
+	struct bio_vec bv;
+
+	bvec_iter_advance(bvec, &bi, seek & PAGE_MASK);
+	for_each_bvec(bv, bvec, bi, bi)
+		flush_dcache_page(bv.bv_page);
+}
+#else
+static inline void
+xs_flush_bvec(const struct bio_vec *bvec, size_t count, size_t seek)
+{
+}
+#endif
+
 static ssize_t
 xs_read_xdr_buf(struct socket *sock, struct msghdr *msg, int flags,
 		struct xdr_buf *buf, size_t count, size_t seek, size_t *read)
@@ -413,6 +434,7 @@ xs_read_xdr_buf(struct socket *sock, struct msghdr *msg, int flags,
 				seek + buf->page_base);
 		if (ret <= 0)
 			goto sock_err;
+		xs_flush_bvec(buf->bvec, ret, seek + buf->page_base);
 		offset += ret - buf->page_base;
 		if (offset == count || msg->msg_flags & (MSG_EOR|MSG_TRUNC))
 			goto out;
@@ -1217,6 +1239,8 @@ static void xs_reset_transport(struct sock_xprt *transport)
 
 	trace_rpc_socket_close(xprt, sock);
 	sock_release(sock);
+
+	xprt_disconnect_done(xprt);
 }
 
 /**
@@ -1237,8 +1261,6 @@ static void xs_close(struct rpc_xprt *xprt)
 
 	xs_reset_transport(transport);
 	xprt->reestablish_timeout = 0;
-
-	xprt_disconnect_done(xprt);
 }
 
 static void xs_inject_disconnect(struct rpc_xprt *xprt)
@@ -1489,8 +1511,6 @@ static void xs_tcp_state_change(struct sock *sk)
 					&transport->sock_state))
 			xprt_clear_connecting(xprt);
 		clear_bit(XPRT_CLOSING, &xprt->state);
-		if (sk->sk_err)
-			xprt_wake_pending_tasks(xprt, -sk->sk_err);
 		/* Trigger the socket release */
 		xs_tcp_force_close(xprt);
 	}
@@ -2092,8 +2112,8 @@ static void xs_udp_setup_socket(struct work_struct *work)
 	trace_rpc_socket_connect(xprt, sock, 0);
 	status = 0;
 out:
-	xprt_unlock_connect(xprt, transport);
 	xprt_clear_connecting(xprt);
+	xprt_unlock_connect(xprt, transport);
 	xprt_wake_pending_tasks(xprt, status);
 }
 
@@ -2329,8 +2349,8 @@ static void xs_tcp_setup_socket(struct work_struct *work)
 	}
 	status = -EAGAIN;
 out:
-	xprt_unlock_connect(xprt, transport);
 	xprt_clear_connecting(xprt);
+	xprt_unlock_connect(xprt, transport);
 	xprt_wake_pending_tasks(xprt, status);
 }
 

@@ -513,7 +513,13 @@ static void vhost_net_busy_poll(struct vhost_net *net,
 	struct socket *sock;
 	struct vhost_virtqueue *vq = poll_rx ? tvq : rvq;
 
-	mutex_lock_nested(&vq->mutex, poll_rx ? VHOST_NET_VQ_TX: VHOST_NET_VQ_RX);
+	/* Try to hold the vq mutex of the paired virtqueue. We can't
+	 * use mutex_lock() here since we could not guarantee a
+	 * consistenet lock ordering.
+	 */
+	if (!mutex_trylock(&vq->mutex))
+		return;
+
 	vhost_disable_notify(&net->dev, vq);
 	sock = rvq->private_data;
 
@@ -1186,7 +1192,8 @@ static void handle_rx(struct vhost_net *net)
 		if (nvq->done_idx > VHOST_NET_BATCH)
 			vhost_net_signal_used(nvq);
 		if (unlikely(vq_log))
-			vhost_log_write(vq, vq_log, log, vhost_len);
+			vhost_log_write(vq, vq_log, log, vhost_len,
+					vq->iov, in);
 		total_len += vhost_len;
 		if (unlikely(vhost_exceeds_weight(++recv_pkts, total_len))) {
 			vhost_poll_queue(&vq->poll);
@@ -1286,7 +1293,8 @@ static int vhost_net_open(struct inode *inode, struct file *f)
 		n->vqs[i].rx_ring = NULL;
 		vhost_net_buf_init(&n->vqs[i].rxq);
 	}
-	vhost_dev_init(dev, vqs, VHOST_NET_VQ_MAX);
+	vhost_dev_init(dev, vqs, VHOST_NET_VQ_MAX,
+		       UIO_MAXIOV + VHOST_NET_BATCH);
 
 	vhost_poll_init(n->poll + VHOST_NET_VQ_TX, handle_tx_net, EPOLLOUT, dev);
 	vhost_poll_init(n->poll + VHOST_NET_VQ_RX, handle_rx_net, EPOLLIN, dev);
