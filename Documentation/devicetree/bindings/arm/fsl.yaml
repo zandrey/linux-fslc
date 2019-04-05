@@ -131,6 +131,7 @@ properties:
         items:
           - enum:
               - fsl,imx6ul-14x14-evk      # i.MX6 UltraLite 14x14 EVK Board
+              - technexion,imx6ul-pico-dwarf # i.MX6 UltraLite Pico Dwarf Board
           - const: fsl,imx6ul
 
       - description: i.MX6ULL based Boards
