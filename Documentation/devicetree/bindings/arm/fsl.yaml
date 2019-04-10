@@ -141,6 +141,7 @@ properties:
         items:
           - enum:
               - fsl,imx7d-sdb             # i.MX7 SabreSD Board
+              - technexion,imx7d-pico-dwarf # i.MX7 Pico Dwarf Board
           - const: fsl,imx7d
 
       - description:
