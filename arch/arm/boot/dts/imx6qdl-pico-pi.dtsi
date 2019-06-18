@@ -18,6 +18,10 @@
 
 };
 
+&hdmi {
+	status = "disabled";
+};
+
 &iomuxc {
 	pinctrl_gpio_leds: gpioledsgrp {
 		fsl,pins = <
