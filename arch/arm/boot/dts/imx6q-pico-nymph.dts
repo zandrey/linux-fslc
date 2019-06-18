@@ -15,3 +15,7 @@
 	model = "TechNexion PICO-IMX6 Quad Board and Nymph baseboard";
 	compatible = "technexion,imx6q-pico", "fsl,imx6q";
 };
+
+&sata {
+	status = "okay";
+};
