@@ -2545,6 +2545,7 @@ static const struct drm_display_mode vl050_8048nt_c01_mode = {
 	.vsync_end = 480 + 22 + 10,
 	.vtotal = 480 + 22 + 10 + 23,
 	.vrefresh = 60,
+	.flags = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
 };
 
 static const struct panel_desc vl050_8048nt_c01 = {
@@ -2554,6 +2555,8 @@ static const struct panel_desc vl050_8048nt_c01 = {
 		.width = 120,
 		.height = 76,
 	},
+	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
+	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_POSEDGE,
 };
 
 static const struct drm_display_mode winstar_wf35ltiacd_mode = {
