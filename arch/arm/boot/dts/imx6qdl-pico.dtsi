@@ -188,6 +188,17 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_i2c2>;
 	status = "okay";
+
+	touchscreen@38 {
+		compatible = "edt,edt-ft5x06";
+		reg = <0x38>;
+		interrupt-parent = <&gpio5>;
+		interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
+		reset-gpios = <&gpio5 27 GPIO_ACTIVE_LOW>;
+		touchscreen-size-x = <800>;
+		touchscreen-size-y = <480>;
+		wakeup-source;
+	};
 };
 
 &i2c3 {
