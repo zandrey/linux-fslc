@@ -26,6 +26,8 @@
 
 &usdhc3 {
 	compatible = "fsl,imx8qm-usdhc", "fsl,imx8qxp-usdhc";
+	fsl,tuning-start-tap = <20>;
+	fsl,tuning-step= <2>;
 	iommus = <&smmu 0x11 0x7f80>;
 };
 
