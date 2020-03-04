@@ -2604,9 +2604,12 @@ static int alloc_intel_hdmi(struct hda_codec *codec)
 /* parse and post-process for Intel codecs */
 static int parse_intel_hdmi(struct hda_codec *codec)
 {
-	int err;
+	int err, retries = 3;
 
-	err = hdmi_parse_codec(codec);
+	do {
+		err = hdmi_parse_codec(codec);
+	} while (err < 0 && retries--);
+
 	if (err < 0) {
 		generic_spec_free(codec);
 		return err;
@@ -3263,6 +3266,8 @@ static int patch_nvhdmi(struct hda_codec *codec)
 	spec->chmap.ops.chmap_cea_alloc_validate_get_type =
 		nvhdmi_chmap_cea_alloc_validate_get_type;
 	spec->chmap.ops.chmap_validate = nvhdmi_chmap_validate;
+
+	codec->link_down_at_suspend = 1;
 
 	return 0;
 }
