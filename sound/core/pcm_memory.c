@@ -77,6 +77,7 @@ void snd_pcm_lib_preallocate_free(struct snd_pcm_substream *substream)
 {
 	snd_pcm_lib_preallocate_dma_free(substream);
 }
+EXPORT_SYMBOL(snd_pcm_lib_preallocate_free);
 
 /**
  * snd_pcm_lib_preallocate_free_for_all - release all pre-allocated buffers on the pcm
