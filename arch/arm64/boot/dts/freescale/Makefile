@@ -72,38 +72,6 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mq-evk-dp.dtb
 dtb-$(CONFIG_ARCH_MXC) += imx8mq-zii-ultra-rmb3.dtb
 dtb-$(CONFIG_ARCH_MXC) += imx8mq-zii-ultra-zest.dtb
 dtb-$(CONFIG_ARCH_MXC) += imx8mq-ddr3l-val.dtb imx8mq-ddr4-val.dtb imx8mq-ddr4-val-gpmi-nand.dtb
-dtb-$(CONFIG_ARCH_MXC) += imx8mq-var-dart-wifi-dp.dtb \
-			  imx8mq-var-dart-wifi-hdmi.dtb \
-			  imx8mq-var-dart-wifi-lvds.dtb \
-			  imx8mq-var-dart-wifi-lvds-dp.dtb \
-			  imx8mq-var-dart-wifi-lvds-hdmi.dtb \
-			  imx8mq-var-dart-wifi-hdmi-cb12.dtb \
-			  imx8mq-var-dart-wifi-lvds-cb12.dtb \
-			  imx8mq-var-dart-wifi-lvds-hdmi-cb12.dtb \
-			  imx8mq-var-dart-sd-dp.dtb \
-			  imx8mq-var-dart-sd-hdmi.dtb \
-			  imx8mq-var-dart-sd-lvds.dtb \
-			  imx8mq-var-dart-sd-lvds-dp.dtb \
-			  imx8mq-var-dart-sd-lvds-hdmi.dtb \
-			  imx8mq-var-dart-sd-hdmi-cb12.dtb \
-			  imx8mq-var-dart-sd-lvds-cb12.dtb \
-			  imx8mq-var-dart-sd-lvds-hdmi-cb12.dtb \
-			  imx8mq-var-dart-m4-wifi-dp.dtb \
-			  imx8mq-var-dart-m4-wifi-hdmi.dtb \
-			  imx8mq-var-dart-m4-wifi-lvds.dtb \
-			  imx8mq-var-dart-m4-wifi-lvds-dp.dtb \
-			  imx8mq-var-dart-m4-wifi-lvds-hdmi.dtb \
-			  imx8mq-var-dart-m4-wifi-hdmi-cb12.dtb \
-			  imx8mq-var-dart-m4-wifi-lvds-cb12.dtb \
-			  imx8mq-var-dart-m4-wifi-lvds-hdmi-cb12.dtb \
-			  imx8mq-var-dart-m4-sd-dp.dtb \
-			  imx8mq-var-dart-m4-sd-hdmi.dtb \
-			  imx8mq-var-dart-m4-sd-lvds.dtb \
-			  imx8mq-var-dart-m4-sd-lvds-dp.dtb \
-			  imx8mq-var-dart-m4-sd-lvds-hdmi.dtb \
-			  imx8mq-var-dart-m4-sd-hdmi-cb12.dtb \
-			  imx8mq-var-dart-m4-sd-lvds-cb12.dtb \
-			  imx8mq-var-dart-m4-sd-lvds-hdmi-cb12.dtb
 dtb-$(CONFIG_ARCH_MXC) += imx8qm-mek.dtb imx8qm-mek-ov5640.dtb \
 			  imx8qm-mek-enet2-tja1100.dtb imx8qm-mek-rpmsg.dtb \
 			  imx8qm-mek-hdmi.dtb imx8qm-mek-dsp.dtb \
