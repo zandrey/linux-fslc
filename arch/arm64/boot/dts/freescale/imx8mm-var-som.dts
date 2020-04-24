@@ -86,7 +86,7 @@
 		/delete-node/ linux,cma;
 
 		/delete-node/ rpmsg@b8000000;
-		rpmsg_reserved: rpmsg@0x40000000 {
+		rpmsg_reserved: rpmsg@40000000 {
 			no-map;
 			reg = <0 0x40000000 0 0x400000>;
 		};
@@ -271,6 +271,7 @@
 				MX8MM_IOMUXC_UART1_TXD_UART1_DCE_TX		0x140
 			>;
 		};
+
 
 		pinctrl_uart2: uart2grp {
 			fsl,pins = <
@@ -751,7 +752,7 @@
 	};
 
 	/* DS1337 RTC module */
-	rtc@0x68 {
+	rtc@68 {
 		status = "okay";
 		compatible = "dallas,ds1337";
 		reg = <0x68>;
