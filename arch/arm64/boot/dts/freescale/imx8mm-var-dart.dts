@@ -177,11 +177,6 @@
 
 };
 
-&clk {
-	assigned-clocks = <&clk IMX8MM_AUDIO_PLL1>;
-	assigned-clock-rates = <393216000>;
-};
-
 &iomuxc {
 	pinctrl-names = "default";
 
