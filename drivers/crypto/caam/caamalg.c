@@ -1961,6 +1961,21 @@ static struct caam_skcipher_alg driver_algs[] = {
 	{
 		.skcipher = {
 			.base = {
+				.cra_name = "ecb(arc4)",
+				.cra_driver_name = "ecb-arc4-caam",
+				.cra_blocksize = ARC4_BLOCK_SIZE,
+			},
+			.setkey = arc4_skcipher_setkey,
+			.encrypt = skcipher_encrypt,
+			.decrypt = skcipher_decrypt,
+			.min_keysize = ARC4_MIN_KEY_SIZE,
+			.max_keysize = ARC4_MAX_KEY_SIZE,
+		},
+		.caam.class1_alg_type = OP_ALG_ALGSEL_ARC4 | OP_ALG_AAI_ECB,
+	},
+	{
+		.skcipher = {
+			.base = {
 				.cra_name = "cbc(des)",
 				.cra_driver_name = "cbc-des-caam",
 				.cra_blocksize = DES_BLOCK_SIZE,
@@ -2093,21 +2108,6 @@ static struct caam_skcipher_alg driver_algs[] = {
 			.max_keysize = DES3_EDE_KEY_SIZE,
 		},
 		.caam.class1_alg_type = OP_ALG_ALGSEL_3DES | OP_ALG_AAI_ECB,
-	},
-	{
-		.skcipher = {
-			.base = {
-				.cra_name = "ecb(arc4)",
-				.cra_driver_name = "ecb-arc4-caam",
-				.cra_blocksize = ARC4_BLOCK_SIZE,
-			},
-			.setkey = arc4_skcipher_setkey,
-			.encrypt = skcipher_encrypt,
-			.decrypt = skcipher_decrypt,
-			.min_keysize = ARC4_MIN_KEY_SIZE,
-			.max_keysize = ARC4_MAX_KEY_SIZE,
-		},
-		.caam.class1_alg_type = OP_ALG_ALGSEL_ARC4 | OP_ALG_AAI_ECB,
 	},
 };
 
@@ -3652,7 +3652,7 @@ int caam_algapi_init(struct device *ctrldev)
 
 		/* Skip ARC4 algorithms if not supported by device */
 		if (!arc4_inst && alg_sel == OP_ALG_ALGSEL_ARC4)
-			continue;
+				continue;
 
 		/*
 		 * Check support for AES modes not available
