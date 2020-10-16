@@ -3029,8 +3029,8 @@ enum coda_platform {
 static const struct coda_devtype coda_devdata[] = {
 	[CODA_IMX27] = {
 		.firmware     = {
-			"vpu_fw_imx27_TO2.bin",
 			"vpu/vpu_fw_imx27_TO2.bin",
+			"vpu_fw_imx27_TO2.bin",
 			"v4l-codadx6-imx27.bin"
 		},
 		.product      = CODA_DX6,
@@ -3043,8 +3043,8 @@ static const struct coda_devtype coda_devdata[] = {
 	},
 	[CODA_IMX51] = {
 		.firmware     = {
-			"vpu_fw_imx51.bin",
 			"vpu/vpu_fw_imx51.bin",
+			"vpu_fw_imx51.bin",
 			"v4l-codahx4-imx51.bin"
 		},
 		.product      = CODA_HX4,
@@ -3058,8 +3058,8 @@ static const struct coda_devtype coda_devdata[] = {
 	},
 	[CODA_IMX53] = {
 		.firmware     = {
-			"vpu_fw_imx53.bin",
 			"vpu/vpu_fw_imx53.bin",
+			"vpu_fw_imx53.bin",
 			"v4l-coda7541-imx53.bin"
 		},
 		.product      = CODA_7541,
@@ -3073,8 +3073,8 @@ static const struct coda_devtype coda_devdata[] = {
 	},
 	[CODA_IMX6Q] = {
 		.firmware     = {
-			"vpu_fw_imx6q.bin",
 			"vpu/vpu_fw_imx6q.bin",
+			"vpu_fw_imx6q.bin",
 			"v4l-coda960-imx6q.bin"
 		},
 		.product      = CODA_960,
@@ -3088,8 +3088,8 @@ static const struct coda_devtype coda_devdata[] = {
 	},
 	[CODA_IMX6DL] = {
 		.firmware     = {
-			"vpu_fw_imx6d.bin",
 			"vpu/vpu_fw_imx6d.bin",
+			"vpu_fw_imx6d.bin",
 			"v4l-coda960-imx6dl.bin"
 		},
 		.product      = CODA_960,
