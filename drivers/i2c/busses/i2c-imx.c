@@ -682,9 +682,7 @@ static int i2c_imx_start(struct imx_i2c_struct *i2c_imx, bool atomic)
 	unsigned int temp = 0;
 	int result;
 
-	result = i2c_imx_set_clk(i2c_imx, clk_get_rate(i2c_imx->clk));
-	if (result)
-		return result;
+	dev_dbg(&i2c_imx->adapter.dev, "<%s>\n", __func__);
 
 	imx_i2c_write_reg(i2c_imx->ifdr, i2c_imx, IMX_I2C_IFDR);
 	/* Enable I2C controller */
