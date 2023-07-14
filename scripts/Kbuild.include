@@ -53,6 +53,10 @@ basetarget = $(basename $(notdir $@))
 real-prereqs = $(filter-out $(PHONY), $^)
 
 ###
+# prereqs for fdtoverlay should be only binary dt files
+dtb-prereqs = $(filter %.dtb %.dtbo, $^)
+
+###
 # Escape single quote for use in echo statements
 escsq = $(subst $(squote),'\$(squote)',$1)
 
